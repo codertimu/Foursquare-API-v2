@@ -1442,11 +1442,14 @@ Foursquare2Callback authorizeCallbackDelegate;
 + (void)authorizeWithCallback:(Foursquare2Callback)callback {
 	authorizeCallbackDelegate = [callback copy];
     
-    if ([self nativeAuthorization]) {
-        return;
-    }
+    // select native or web authorization based on existence of Foursquare app
+    BOOL isInstalled = [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"foursquare://"]];
     
-    [self webAuthorization];
+    if (isInstalled) {
+        [self nativeAuthorization];
+    } else {
+        [self webAuthorization];
+    }
 }
 
 + (BOOL)handleURL:(NSURL *)url {
